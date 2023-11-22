@@ -17,8 +17,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.mkildishev.generator.builder.NameBuilder.getLastVariableName;
-import static com.mkildishev.generator.builder.NameBuilder.getName;
+import static com.mkildishev.generator.builder.NameBuilder.*;
 import static com.mkildishev.generator.utils.Utils.capitalize;
 import static com.mkildishev.generator.utils.Utils.getType;
 
@@ -108,9 +107,22 @@ public class SetterBuilder {
             StringBuilder result = new StringBuilder();
             List<String> names = new ArrayList<>();
             result.append(fieldType.getTypeName()).append(" ").append(getName(ObjectType.VARIABLE)).append(" = ").append("new ").append(fieldType.getTypeName()).append("();\n").toString();
-            for (var v : val) {
-                result.append(valueConverter(v, ((ParameterizedType) fieldType).getActualTypeArguments()[0])); // срань
-                names.add(getLastVariableName());
+            var objectName = getLastVariableName();
+            for (Iterator<Map.Entry<String, JsonNode>> it = val.fields(); it.hasNext(); ) {
+                try {
+                    var a = it.next();
+                    var value = a.getValue();
+                    var field1 = a.getKey();
+                    var clazz = Class.forName(fieldType.getTypeName());
+                    var field = clazz.getDeclaredField(field1);
+                    var fieldType1 = field.getGenericType();
+                    result.append(valueConverter(value, fieldType1));
+                    names.add(getLastVariableName());
+                    result.append(objectName + "." + "set" + capitalize(field.getName()) + "(" + getLastVariableName() + ");" + '\n');
+                } catch (ClassNotFoundException | NoSuchFieldException e) {
+                    System.out.println("sdass");
+                }
+
             }
             return result.toString();
         }
