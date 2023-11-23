@@ -10,10 +10,8 @@ import java.io.InputStream;
 import java.util.Iterator;
 import java.util.Map;
 
-import static com.mkildishev.generator.builder.SetterBuilder.buildSetter;
 import static com.mkildishev.generator.builder.SetterBuilder.generateCode;
-import static com.mkildishev.generator.utils.Utils.capitalize;
-import static com.mkildishev.generator.utils.Utils.getType;
+
 
 
 /**

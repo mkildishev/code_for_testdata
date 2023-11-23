@@ -26,61 +26,29 @@ public class SetterBuilder {
     public static String generateCode(String fileName) {
         ObjectMapper mapper = new ObjectMapper();
         try (InputStream s = App.class.getClassLoader().getResource(fileName).openStream()) {
+
             var json = s.readAllBytes();
             var objJson = mapper.readTree(json);
-            StringBuilder result = new StringBuilder();
-            for (Iterator<Map.Entry<String, JsonNode>> it = objJson.fields(); it.hasNext(); ) {
-                var a = it.next();
-                var val = a.getValue();
-                var field = a.getKey();
-                result.append(buildSetter("org.example.model.TestClass", "obj", field, val, ""));
-
-            }
-            System.out.println(result);
+            var clazz = Class.forName("org.example.model.TestClass");
+            var str = valueConverter(objJson, clazz);
+            System.out.println(str);
         } catch (IOException e) {
             throw new RuntimeException(e);
-        } catch (ClassNotFoundException | NoSuchFieldException e) {
+        } catch (ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return null;
     }
-    public static String buildSetter(String objectClass, String objectName, String fieldName, JsonNode fieldValue, String initial) throws ClassNotFoundException, NoSuchFieldException {
-        var clazz = Class.forName(objectClass);
-        var field = clazz.getDeclaredField(fieldName);
-        var fieldType = field.getGenericType();
-        if (NodeType.PRIMITIVE.equals(getType(fieldValue))) {
-            initial += valueConverter(fieldValue, fieldType);
-            initial += objectName + "." + "set" + capitalize(fieldName) + "(" + NameBuilder.getLastVariableName() + ");" + '\n';
-        } else {
-            initial += createNewObject(fieldType);
-            StringBuilder initialBuilder = new StringBuilder(initial);
-            for (Iterator<Map.Entry<String, JsonNode>> it = fieldValue.fields(); it.hasNext(); ) {
-                var a = it.next();
-                var val = a.getValue();
-                var field1 = a.getKey();
-                initialBuilder.append(buildSetter(fieldType.getTypeName(), "generatedName", field1, val, ""));
-            }
-            initial = initialBuilder.toString();
-            //initial += buildSetter(fieldType.getName(), "generatedName", )
-            System.out.println("complex");
-        }
-        System.out.println("succ");
-        return initial;
-    }
 
-    public static String createNewObject(Type type) {
-        return "obj";
-    }
-
-    public static String valueConverter(JsonNode val, Type fieldType) { // Отдельный модуль с классами под каждый тип?
+    public static String valueConverter(JsonNode val, Type fieldType) {
         if (fieldType.equals(Integer.class)) {
-            return "Integer " + getName(ObjectType.VARIABLE) + " = " + "Integer.valueOf(\"" + val.toString() + "\");\n";
+            return "Integer " + getName() + " = " + "Integer.valueOf(\"" + val.toString() + "\");\n";
         }
         if (fieldType.equals(BigDecimal.class)) {
-            return "BigDecimal " + getName(ObjectType.VARIABLE) + " = " +  "BigDecimal.valueOf(\"" + val.toString() + "\");\n";
+            return "BigDecimal " + getName() + " = " +  "BigDecimal.valueOf(\"" + val.toString() + "\");\n";
         }
         if (fieldType.equals(String.class)) {
-            return "String " + getName(ObjectType.VARIABLE) + " = " +   val.toString() + ";\n";
+            return "String " + getName() + " = " +   val.toString() + ";\n";
         }
         if (isGenericType(fieldType) && ((ParameterizedType) fieldType).getRawType().equals(Map.class)) {
             for (Iterator<Map.Entry<String, JsonNode>> it = val.fields(); it.hasNext(); ) {
@@ -96,58 +64,35 @@ public class SetterBuilder {
             List<String> names = new ArrayList<>();
             for (var v : val) {
                 result.append(valueConverter(v, ((ParameterizedType) fieldType).getActualTypeArguments()[0]));
-                names.add(getLastVariableName());
+                names.add(popName());
             }
             String typeName = fieldType.getTypeName();
-            result.append(typeName).append(" ").append(getName(ObjectType.VARIABLE)).append(" = ").append("List.of(").append(String.join(", ", names)).append(");\n");
-            //result.append("List<").append(typeName).append("> ").append(getName(ObjectType.VARIABLE)).append(" = ").append("List.of(").append(String.join(", ", names)).append(");\n");
+            result.append(typeName).append(" ").append(getName()).append(" = ").append("List.of(").append(String.join(", ", names)).append(");\n");
             return result.toString();
         }
-        if (fieldType instanceof Object) {
-            StringBuilder result = new StringBuilder();
-            List<String> names = new ArrayList<>();
-            result.append(fieldType.getTypeName()).append(" ").append(getName(ObjectType.VARIABLE)).append(" = ").append("new ").append(fieldType.getTypeName()).append("();\n").toString();
-            var objectName = getLastVariableName();
-            for (Iterator<Map.Entry<String, JsonNode>> it = val.fields(); it.hasNext(); ) {
-                try {
-                    var a = it.next();
-                    var value = a.getValue();
-                    var field1 = a.getKey();
-                    var clazz = Class.forName(fieldType.getTypeName());
-                    var field = clazz.getDeclaredField(field1);
-                    var fieldType1 = field.getGenericType();
-                    result.append(valueConverter(value, fieldType1));
-                    names.add(getLastVariableName());
-                    result.append(objectName + "." + "set" + capitalize(field.getName()) + "(" + getLastVariableName() + ");" + '\n');
-                } catch (ClassNotFoundException | NoSuchFieldException e) {
-                    System.out.println("sdass");
-                }
 
+        StringBuilder result = new StringBuilder();
+        result.append(fieldType.getTypeName()).append(" ").append(getName()).append(" = ").append("new ").append(fieldType.getTypeName()).append("();\n").toString();
+        var objectName = getLastVariableName();
+        for (Iterator<Map.Entry<String, JsonNode>> it = val.fields(); it.hasNext(); ) {
+            try {
+                var a = it.next();
+                var value = a.getValue();
+                var field1 = a.getKey();
+                var clazz = Class.forName(fieldType.getTypeName());
+                var field = clazz.getDeclaredField(field1);
+                var fieldType1 = field.getGenericType();
+                result.append(valueConverter(value, fieldType1));
+                result.append(objectName + "." + "set" + capitalize(field.getName()) + "(" + popName() + ");" + '\n');
+            } catch (ClassNotFoundException | NoSuchFieldException e) {
+                System.out.println("sdass");
             }
-            return result.toString();
-        }
 
-        return "No value\n";
+        }
+        return result.toString();
     }
 
     private static boolean isGenericType(Type type) {
         return type instanceof ParameterizedType;
     }
-
-    public static String processListNode(JsonNode node, Type fieldType) {
-        StringBuilder result = new StringBuilder();
-        List<String> names = new ArrayList<>();
-        for (var v : node) {
-            result.append(valueConverter(v, ((ParameterizedType) fieldType).getActualTypeArguments()[0]));
-            names.add(getLastVariableName());
-        }
-        String typeName = ((Class<?>)((ParameterizedType) fieldType).getActualTypeArguments()[0]).getSimpleName();
-        result.append("List<").append(typeName).append("> ").append(getName(ObjectType.VARIABLE)).append(" = ").append("List.of(").append(String.join(", ", names)).append(");\n");
-        return result.toString();
-    }
-
-    private static String mapEntryGenerator(Map.Entry<String, JsonNode> node) {
-        return "mapEntry";
-    }
-
 }
