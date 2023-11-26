@@ -21,6 +21,7 @@ public class SetterBuilder {
 
     public static String generateCode(String fileName) {
         ObjectMapper mapper = new ObjectMapper();
+        // Need to improve ability to change class loader
         try (InputStream s = App.class.getClassLoader().getResource(fileName).openStream()) {
 
             var json = s.readAllBytes();
@@ -36,13 +37,13 @@ public class SetterBuilder {
 
     public static String valueConverter(JsonNode val, Type fieldType) {
         if (fieldType.equals(Integer.class)) {
-            return makeInteger(val.toString());
+            return makeInteger(val.asText());
         }
         if (fieldType.equals(BigDecimal.class)) {
-            return makeBigDecimal(val.toString());
+            return makeBigDecimal(val.asText());
         }
         if (fieldType.equals(String.class)) {
-            return makeString(val.toString());
+            return makeString(val.asText());
         }
         if (isGenericType(fieldType) && ((ParameterizedType) fieldType).getRawType().equals(Map.class)) {
             return makeMap(fieldType, val);
@@ -66,7 +67,7 @@ public class SetterBuilder {
     }
 
     private static String makeString(String value) {
-        return "String " + getName() + " = " + value + ";\n";
+        return "String " + getName() + " = \"" + value + "\";\n";
     }
 
     private static String putIntoMap(String mapName, String key, String value) {
