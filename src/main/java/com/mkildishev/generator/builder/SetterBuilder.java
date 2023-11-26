@@ -23,7 +23,6 @@ public class SetterBuilder {
         ObjectMapper mapper = new ObjectMapper();
         // Need to improve ability to change class loader
         try (InputStream s = App.class.getClassLoader().getResource(fileName).openStream()) {
-
             var json = s.readAllBytes();
             var objJson = mapper.readTree(json);
             var clazz = Class.forName("org.example.model.TestClass");
@@ -132,7 +131,7 @@ public class SetterBuilder {
                 result.append(valueConverter(value, field.getGenericType()));
                 result.append(makeSetter(objectName, field.getName()));
             } catch (NoSuchFieldException e) {
-                System.out.println("sdass");
+                System.out.println("Field cannot be found");
             }
 
         }
