@@ -51,14 +51,20 @@ public class SetterBuilder {
             return "String " + getName() + " = " +   val.toString() + ";\n";
         }
         if (isGenericType(fieldType) && ((ParameterizedType) fieldType).getRawType().equals(Map.class)) {
+            StringBuilder result = new StringBuilder();
+            var objName = getName();
+            result.append(fieldType.getTypeName()).append(" ").append(objName).append(" = ").append("new ").append(fieldType.getTypeName()).append("();\n").toString();
             for (Iterator<Map.Entry<String, JsonNode>> it = val.fields(); it.hasNext(); ) {
-                var v = it.next();
-                
-                System.out.println("succ");
+                var a = it.next();
+                var mapKey = a.getKey();
+                var mapValue = a.getValue();
+                result.append("String " + getName() + " = \"" + mapKey + "\";\n");
+                result.append(valueConverter(mapValue, ((ParameterizedType) fieldType).getActualTypeArguments()[1]));
+                result.append(objName + ".put(" + popName() + ", " + popName() + ");\n");
             }
             // generate entry
-            return "we're here with map\n";
-        } // классы читаются отдельно как непараметризуемый тип
+            return result.toString();
+        }
         if (isGenericType(fieldType) && ((ParameterizedType) fieldType).getRawType().equals(List.class)) {
             StringBuilder result = new StringBuilder();
             List<String> names = new ArrayList<>();
