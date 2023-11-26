@@ -2,13 +2,10 @@ package com.mkildishev.generator.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.mkildishev.generator.model.NodeType;
-import com.mkildishev.generator.model.ObjectType;
 import org.example.App;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
@@ -19,7 +16,6 @@ import java.util.Map;
 
 import static com.mkildishev.generator.builder.NameBuilder.*;
 import static com.mkildishev.generator.utils.Utils.capitalize;
-import static com.mkildishev.generator.utils.Utils.getType;
 
 public class SetterBuilder {
 
@@ -32,9 +28,7 @@ public class SetterBuilder {
             var clazz = Class.forName("org.example.model.TestClass");
             var str = valueConverter(objJson, clazz);
             System.out.println(str);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        } catch (ClassNotFoundException e) {
+        } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return null;
@@ -42,55 +36,101 @@ public class SetterBuilder {
 
     public static String valueConverter(JsonNode val, Type fieldType) {
         if (fieldType.equals(Integer.class)) {
-            return "Integer " + getName() + " = " + "Integer.valueOf(\"" + val.toString() + "\");\n";
+            return makeInteger(val.toString());
         }
         if (fieldType.equals(BigDecimal.class)) {
-            return "BigDecimal " + getName() + " = " +  "BigDecimal.valueOf(\"" + val.toString() + "\");\n";
+            return makeBigDecimal(val.toString());
         }
         if (fieldType.equals(String.class)) {
-            return "String " + getName() + " = " +   val.toString() + ";\n";
+            return makeString(val.toString());
         }
         if (isGenericType(fieldType) && ((ParameterizedType) fieldType).getRawType().equals(Map.class)) {
-            StringBuilder result = new StringBuilder();
-            var objName = getName();
-            result.append(fieldType.getTypeName()).append(" ").append(objName).append(" = ").append("new ").append(fieldType.getTypeName()).append("();\n").toString();
-            for (Iterator<Map.Entry<String, JsonNode>> it = val.fields(); it.hasNext(); ) {
-                var a = it.next();
-                var mapKey = a.getKey();
-                var mapValue = a.getValue();
-                result.append("String " + getName() + " = \"" + mapKey + "\";\n");
-                result.append(valueConverter(mapValue, ((ParameterizedType) fieldType).getActualTypeArguments()[1]));
-                result.append(objName + ".put(" + popName() + ", " + popName() + ");\n");
-            }
-            // generate entry
-            return result.toString();
+            return makeMap(fieldType, val);
         }
         if (isGenericType(fieldType) && ((ParameterizedType) fieldType).getRawType().equals(List.class)) {
-            StringBuilder result = new StringBuilder();
-            List<String> names = new ArrayList<>();
-            for (var v : val) {
-                result.append(valueConverter(v, ((ParameterizedType) fieldType).getActualTypeArguments()[0]));
-                names.add(popName());
-            }
-            String typeName = fieldType.getTypeName();
-            result.append(typeName).append(" ").append(getName()).append(" = ").append("List.of(").append(String.join(", ", names)).append(");\n");
-            return result.toString();
+            return makeList(fieldType,  val);
         }
+        return makeObject(fieldType, val);
+    }
 
+    private static boolean isGenericType(Type type) {
+        return type instanceof ParameterizedType;
+    }
+
+    private static String makeInteger(String value) {
+        return "Integer " + getName() + " = " + "Integer.valueOf(\"" + value + "\");\n";
+    }
+
+    private static String makeBigDecimal(String value) {
+        return "BigDecimal " + getName() + " = " + "BigDecimal.valueOf(\"" + value + "\");\n";
+    }
+
+    private static String makeString(String value) {
+        return "String " + getName() + " = " + value + ";\n";
+    }
+
+    private static String putIntoMap(String mapName, String key, String value) {
+        return mapName + ".put(" + key + ", " + value + ");\n";
+    }
+
+    private static String makeObject(String type, String obj) {
+        return type + " " + obj + " = " + "new " + type + "();\n";
+    }
+
+    private static String makeSetter(String object, String method) {
+        return object + "." + "set" + capitalize(method) + "(" + popName() + ");" + '\n';
+    }
+
+    private static String makeList(String type, List<String> values) {
+        return type + " " + getName() + " = " + "List.of(" + String.join(", ", values) + ");\n";
+    }
+
+    private static String makeList(Type type, JsonNode node) {
         StringBuilder result = new StringBuilder();
-        result.append(fieldType.getTypeName()).append(" ").append(getName()).append(" = ").append("new ").append(fieldType.getTypeName()).append("();\n").toString();
-        var objectName = getLastVariableName();
-        for (Iterator<Map.Entry<String, JsonNode>> it = val.fields(); it.hasNext(); ) {
+        List<String> names = new ArrayList<>();
+        for (var v : node) {
+            result.append(valueConverter(v, ((ParameterizedType) type).getActualTypeArguments()[0]));
+            names.add(popName());
+        }
+        result.append(makeList(type.getTypeName(), names));
+        return result.toString();
+    }
+
+    private static String makeMap(Type type, JsonNode node) {
+        StringBuilder result = new StringBuilder();
+        var objectName = getName();
+        result.append(makeObject(type.getTypeName(), objectName));
+        for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
+            var entry = it.next();
+            result.append(makeString(entry.getKey()));
+            result.append(valueConverter(entry.getValue(), ((ParameterizedType) type).getActualTypeArguments()[1]));
+            var valueResult = popName();
+            var keyResult = popName();
+            result.append(putIntoMap(objectName, keyResult, valueResult));
+        }
+        return result.toString();
+    }
+
+    private static String makeObject(Type type, JsonNode node) {
+        StringBuilder result = new StringBuilder();
+        var objectName = getName();
+        result.append(makeObject(type.getTypeName(), objectName));
+        Class<?> clazz = null;
+        try {
+            clazz = Class.forName(type.getTypeName());
+        } catch (ClassNotFoundException e) {
+            System.out.println("Class " + type.getTypeName() + " cannot be found. Please, check your configuration");
+            throw new RuntimeException(e);
+        }
+        for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
             try {
-                var a = it.next();
-                var value = a.getValue();
-                var field1 = a.getKey();
-                var clazz = Class.forName(fieldType.getTypeName());
-                var field = clazz.getDeclaredField(field1);
-                var fieldType1 = field.getGenericType();
-                result.append(valueConverter(value, fieldType1));
-                result.append(objectName + "." + "set" + capitalize(field.getName()) + "(" + popName() + ");" + '\n');
-            } catch (ClassNotFoundException | NoSuchFieldException e) {
+                var entry = it.next();
+                var value = entry.getValue();
+                var fieldName = entry.getKey();
+                var field = clazz.getDeclaredField(fieldName);
+                result.append(valueConverter(value, field.getGenericType()));
+                result.append(makeSetter(objectName, field.getName()));
+            } catch (NoSuchFieldException e) {
                 System.out.println("sdass");
             }
 
@@ -98,7 +138,4 @@ public class SetterBuilder {
         return result.toString();
     }
 
-    private static boolean isGenericType(Type type) {
-        return type instanceof ParameterizedType;
-    }
 }
