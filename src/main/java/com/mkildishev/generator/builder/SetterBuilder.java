@@ -2,13 +2,18 @@ package com.mkildishev.generator.builder;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mkildishev.generator.utils.Utils;
 import org.example.App;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.math.BigDecimal;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -18,15 +23,27 @@ import static com.mkildishev.generator.builder.NameBuilder.*;
 import static com.mkildishev.generator.utils.Utils.capitalize;
 
 public class SetterBuilder {
-
-    public static String generateCode(String fileName) {
+    // Make it maven plugin
+    public static String generateCode(String file, String jar, String _package) {
         ObjectMapper mapper = new ObjectMapper();
         // Need to improve ability to change class loader
-        try (InputStream s = App.class.getClassLoader().getResource(fileName).openStream()) {
+        // If we can run plugin with using common application classes, then ok
+        // Otherwise we have to parse model source code
+        URLClassLoader classLoader = null;
+        try {
+            classLoader = new URLClassLoader(new URL[]{new File(jar).toURI().toURL()});
+        } catch (MalformedURLException e) {
+            //do nothing until test
+            //throw new RuntimeException(e);
+        }
+        //classLoader.loadClass()
+        try (InputStream s = classLoader.getResource(file).openStream()) {
             var json = s.readAllBytes();
             var objJson = mapper.readTree(json);
-            var clazz = Class.forName("org.example.model.TestClass");
-            var str = valueConverter(objJson, clazz);
+            var className = Utils.capitalize(objJson.fields().next().getKey());
+            var objToProcess = objJson.fields().next().getValue();
+            var clazz = Class.forName(_package + "." + className); // first node is a classname
+            var str = valueConverter(objToProcess, clazz);
             System.out.println(str);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);

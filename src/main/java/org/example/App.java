@@ -11,11 +11,12 @@ import static com.mkildishev.generator.builder.SetterBuilder.generateCode;
  */
 public class App 
 {
-    private static final String SET = "set";
 
     public static void main( String[] args )
     {
-        generateCode("test.json");
+        generateCode("test.json",
+                "testdata-generator-maven-plugin-1.0-SNAPSHOT.jar",
+                "org.example.model");
         System.out.println( "Hello World!" );
     }
 }
