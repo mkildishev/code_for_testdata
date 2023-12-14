@@ -1,6 +1,8 @@
-package com.mkildishev.generator.model.newmodel;
+package com.mkildishev.generator;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mkildishev.generator.converter.Converter;
+import com.mkildishev.generator.converter.factory.ConverterFactory;
 import com.mkildishev.generator.utils.Utils;
 
 import java.io.File;
@@ -13,7 +15,12 @@ import java.net.URLClassLoader;
 // Есть ли смысл разделять создание объектов для примитивов и сложных объектов?
 public class MainClass {
 
-    MakerFactory makerFactory;
+    ConverterFactory converterFactory;
+
+    public MainClass() {
+        converterFactory = new ConverterFactory();
+    }
+
 
     public String generateCode(String file, String jar, String _package) {
         ObjectMapper mapper = new ObjectMapper();
@@ -34,8 +41,8 @@ public class MainClass {
             var className = Utils.capitalize(objJson.fields().next().getKey());
             var objToProcess = objJson.fields().next().getValue();
             var clazz = Class.forName(_package + "." + className); // first node is a classname
-            Maker maker = makerFactory.createMaker(clazz);
-            var str = maker.make(objToProcess, clazz);
+            Converter converter = converterFactory.createConverter(clazz);
+            var str = converter.make(objToProcess, clazz);
             System.out.println(str);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);

@@ -1,8 +1,7 @@
 package com.mkildishev.generator.utils;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mkildishev.generator.model.NodeType;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 public class Utils {
 
@@ -10,11 +9,11 @@ public class Utils {
         return str.substring(0, 1).toUpperCase() + str.substring(1);
     }
 
-    public static NodeType getType(JsonNode node) {
-//        if (node instanceof ObjectNode) {
-//            return NodeType.COMPLEX;
-//        }
-        return NodeType.PRIMITIVE;
+    public static String makeObject(String type, String obj) {
+        return type + " " + obj + " = " + "new " + type + "();\n";
     }
 
+    public static boolean isGenericType(Type type) {
+        return type instanceof ParameterizedType;
+    }
 }

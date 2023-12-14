@@ -1,6 +1,7 @@
-package com.mkildishev.generator.model.newmodel;
+package com.mkildishev.generator.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mkildishev.generator.converter.factory.ConverterFactory;
 
 import java.lang.reflect.Type;
 import java.util.Iterator;
@@ -8,12 +9,16 @@ import java.util.Map;
 
 import static com.mkildishev.generator.builder.NameBuilder.getName;
 import static com.mkildishev.generator.builder.NameBuilder.popName;
-import static com.mkildishev.generator.model.newmodel.Utils.*;
 import static com.mkildishev.generator.utils.Utils.capitalize;
+import static com.mkildishev.generator.utils.Utils.makeObject;
 
-public class CustomMaker implements Maker {
+public class CustomConverter implements Converter {
 
-    private MakerFactory makerFactory;
+    private ConverterFactory converterFactory;
+
+    public CustomConverter(ConverterFactory converterFactory) {
+        this.converterFactory = converterFactory;
+    }
 
     @Override
     public String make(JsonNode node, Type type) {
@@ -33,8 +38,8 @@ public class CustomMaker implements Maker {
                 var value = entry.getValue();
                 var fieldName = entry.getKey();
                 var field = clazz.getDeclaredField(fieldName);
-                Maker typeMaker = makerFactory.createMaker(type);
-                result.append(typeMaker.make(value, field.getGenericType()));
+                Converter typeConverter = converterFactory.createConverter(type);
+                result.append(typeConverter.make(value, field.getGenericType()));
                 result.append(makeSetter(objectName, field.getName()));
             } catch (NoSuchFieldException e) {
                 System.out.println("Field cannot be found");
