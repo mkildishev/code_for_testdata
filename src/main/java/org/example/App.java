@@ -1,8 +1,7 @@
 package org.example;
 
 
-import static com.mkildishev.generator.builder.SetterBuilder.generateCode;
-
+import com.mkildishev.generator.CodeGenerator;
 
 
 /**
@@ -14,7 +13,8 @@ public class App
 
     public static void main( String[] args )
     {
-        generateCode("test.json",
+        CodeGenerator mc = new CodeGenerator();
+        mc.generate("test.json",
                 "testdata-generator-maven-plugin-1.0-SNAPSHOT.jar",
                 "org.example.model");
         System.out.println( "Hello World!" );

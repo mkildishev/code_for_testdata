@@ -13,16 +13,17 @@ import java.net.URL;
 import java.net.URLClassLoader;
 // Можно ли улучшить то, что есть здесь?
 // Есть ли смысл разделять создание объектов для примитивов и сложных объектов?
-public class MainClass {
+// Результат надо сохранять в файл
+public class CodeGenerator {
 
     ConverterFactory converterFactory;
 
-    public MainClass() {
+    public CodeGenerator() {
         converterFactory = new ConverterFactory();
     }
 
 
-    public String generateCode(String file, String jar, String _package) {
+    public String generate(String file, String jar, String _package) {
         ObjectMapper mapper = new ObjectMapper();
         URLClassLoader classLoader = getClassLoader(jar);
         try (InputStream s = classLoader.getResource(file).openStream()) {
@@ -30,12 +31,12 @@ public class MainClass {
             var objJson = mapper.readTree(json);
             var className = Utils.capitalize(objJson.fields().next().getKey());
             var objToProcess = objJson.fields().next().getValue();
-            var clazz = Class.forName(_package + "." + className); // first node is a classname
+            var clazz = Utils.getClass(_package + "." + className);
             Converter converter = converterFactory.createConverter(clazz);
             var str = converter.convert(objToProcess, clazz);
             System.out.println(str);
-        } catch (IOException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+        } catch (IOException e) {
+            throw new RuntimeException("File " + file + " cannot be found, please check your configuration", e);
         }
         return null;
     }

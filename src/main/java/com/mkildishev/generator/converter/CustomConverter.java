@@ -2,6 +2,7 @@ package com.mkildishev.generator.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
+import com.mkildishev.generator.utils.Utils;
 
 import java.lang.reflect.Type;
 import java.util.Iterator;
@@ -9,8 +10,7 @@ import java.util.Map;
 
 import static com.mkildishev.generator.builder.NameBuilder.getName;
 import static com.mkildishev.generator.builder.NameBuilder.popName;
-import static com.mkildishev.generator.utils.Utils.capitalize;
-import static com.mkildishev.generator.utils.Utils.makeObject;
+import static com.mkildishev.generator.utils.Utils.*;
 
 public class CustomConverter implements Converter {
 
@@ -25,14 +25,14 @@ public class CustomConverter implements Converter {
         StringBuilder result = new StringBuilder();
         var objectName = getName();
         result.append(makeObject(type.getTypeName(), objectName));
-        Class<?> clazz = getClass(type.getTypeName());
+        Class<?> clazz = Utils.getClass(type.getTypeName());
         for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
             try {
                 var entry = it.next();
                 var value = entry.getValue();
                 var fieldName = entry.getKey();
                 var field = clazz.getDeclaredField(fieldName);
-                Converter typeConverter = converterFactory.createConverter(type);
+                Converter typeConverter = converterFactory.createConverter(field.getGenericType());
                 result.append(typeConverter.convert(value, field.getGenericType()));
                 result.append(makeSetter(objectName, field.getName()));
             } catch (NoSuchFieldException e) {
@@ -47,11 +47,5 @@ public class CustomConverter implements Converter {
         return object + "." + "set" + capitalize(method) + "(" + popName() + ");" + '\n';
     }
 
-    private Class<?> getClass(String clazz) {
-        try {
-            return Class.forName(clazz);
-        } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Class " + clazz + " cannot be found. Please, check your configuration", e);
-        }
-    }
+
 }

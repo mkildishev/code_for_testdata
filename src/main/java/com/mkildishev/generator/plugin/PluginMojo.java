@@ -1,6 +1,6 @@
 package com.mkildishev.generator.plugin;
 
-import com.mkildishev.generator.builder.SetterBuilder;
+import com.mkildishev.generator.CodeGenerator;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -23,7 +23,8 @@ public class PluginMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException
     {
-        var result = SetterBuilder.generateCode(file, jar,_package);
+        CodeGenerator generator = new CodeGenerator();
+        var result = generator.generate(file, jar,_package);
         System.out.println(result);
     }
 }

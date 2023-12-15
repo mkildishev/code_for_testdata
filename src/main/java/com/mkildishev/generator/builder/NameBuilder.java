@@ -15,10 +15,6 @@ public class NameBuilder {
         return "v" + variableCounter;
     }
 
-    public static String getLastVariableName() {
-        return "v" + variableCounter;
-    }
-
     public static String popName() {
         if (nameStack.isEmpty()) {
             return "stub";

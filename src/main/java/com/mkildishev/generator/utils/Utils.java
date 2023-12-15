@@ -16,4 +16,12 @@ public class Utils {
     public static boolean isGenericType(Type type) {
         return type instanceof ParameterizedType;
     }
+
+    public static Class<?> getClass(String clazz) {
+        try {
+            return Class.forName(clazz);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Class " + clazz + " cannot be found. Please, check your configuration", e);
+        }
+    }
 }
