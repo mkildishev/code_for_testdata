@@ -8,7 +8,7 @@ import static com.mkildishev.generator.builder.NameBuilder.getName;
 
 public class IntegerConverter implements Converter {
     @Override
-    public String make(JsonNode node, Type type) {
+    public String convert(JsonNode node, Type type) {
         return "Integer " + getName() + " = " + "Integer.valueOf(\"" + node.asText() + "\");\n";
     }
 }

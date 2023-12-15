@@ -5,5 +5,5 @@ import com.fasterxml.jackson.databind.JsonNode;
 import java.lang.reflect.Type;
 
 public interface Converter {
-    String make(JsonNode node, Type type);
+    String convert(JsonNode node, Type type);
 }

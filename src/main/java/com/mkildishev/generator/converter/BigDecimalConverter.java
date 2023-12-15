@@ -8,7 +8,7 @@ import static com.mkildishev.generator.builder.NameBuilder.getName;
 
 public class BigDecimalConverter implements Converter {
     @Override
-    public String make(JsonNode node, Type type) {
+    public String convert(JsonNode node, Type type) {
         return "BigDecimal " + getName() + " = " + "BigDecimal.valueOf(\"" + node.asText() + "\");\n";
     }
 }

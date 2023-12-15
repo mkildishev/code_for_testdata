@@ -1,13 +1,9 @@
 package com.mkildishev.generator.builder;
 
-import com.mkildishev.generator.model.ObjectType;
-
 import java.math.BigInteger;
 import java.util.Stack;
 
 public class NameBuilder {
-
-    private static BigInteger objectCounter = BigInteger.valueOf(0);
 
     private static BigInteger variableCounter = BigInteger.valueOf(0);
 

@@ -21,17 +21,11 @@ public class CustomConverter implements Converter {
     }
 
     @Override
-    public String make(JsonNode node, Type type) {
+    public String convert(JsonNode node, Type type) {
         StringBuilder result = new StringBuilder();
         var objectName = getName();
         result.append(makeObject(type.getTypeName(), objectName));
-        Class<?> clazz = null;
-        try {
-            clazz = Class.forName(type.getTypeName());
-        } catch (ClassNotFoundException e) {
-            System.out.println("Class " + type.getTypeName() + " cannot be found. Please, check your configuration");
-            throw new RuntimeException(e);
-        }
+        Class<?> clazz = getClass(type.getTypeName());
         for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
             try {
                 var entry = it.next();
@@ -39,7 +33,7 @@ public class CustomConverter implements Converter {
                 var fieldName = entry.getKey();
                 var field = clazz.getDeclaredField(fieldName);
                 Converter typeConverter = converterFactory.createConverter(type);
-                result.append(typeConverter.make(value, field.getGenericType()));
+                result.append(typeConverter.convert(value, field.getGenericType()));
                 result.append(makeSetter(objectName, field.getName()));
             } catch (NoSuchFieldException e) {
                 System.out.println("Field cannot be found");
@@ -51,5 +45,13 @@ public class CustomConverter implements Converter {
 
     private String makeSetter(String object, String method) {
         return object + "." + "set" + capitalize(method) + "(" + popName() + ");" + '\n';
+    }
+
+    private Class<?> getClass(String clazz) {
+        try {
+            return Class.forName(clazz);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException("Class " + clazz + " cannot be found. Please, check your configuration", e);
+        }
     }
 }

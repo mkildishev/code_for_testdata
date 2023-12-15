@@ -24,17 +24,7 @@ public class MainClass {
 
     public String generateCode(String file, String jar, String _package) {
         ObjectMapper mapper = new ObjectMapper();
-        // Need to improve ability to change class loader
-        // If we can run plugin with using common application classes, then ok
-        // Otherwise we have to parse model source code
-        URLClassLoader classLoader = null;
-        try {
-            classLoader = new URLClassLoader(new URL[]{new File(jar).toURI().toURL()});
-        } catch (MalformedURLException e) {
-            //do nothing until test
-            //throw new RuntimeException(e);
-        }
-        //classLoader.loadClass()
+        URLClassLoader classLoader = getClassLoader(jar);
         try (InputStream s = classLoader.getResource(file).openStream()) {
             var json = s.readAllBytes();
             var objJson = mapper.readTree(json);
@@ -42,11 +32,19 @@ public class MainClass {
             var objToProcess = objJson.fields().next().getValue();
             var clazz = Class.forName(_package + "." + className); // first node is a classname
             Converter converter = converterFactory.createConverter(clazz);
-            var str = converter.make(objToProcess, clazz);
+            var str = converter.convert(objToProcess, clazz);
             System.out.println(str);
         } catch (IOException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
         return null;
+    }
+
+    private URLClassLoader getClassLoader(String jar) {
+        try {
+            return new URLClassLoader(new URL[]{new File(jar).toURI().toURL()});
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("JAR " + jar + " cannot be found, please check your configuration", e);
+        }
     }
 }
