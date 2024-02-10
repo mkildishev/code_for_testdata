@@ -25,7 +25,7 @@ public class CodeGenerator {
 
     public String generate(String file, String jar, String _package) {
         ObjectMapper mapper = new ObjectMapper();
-        URLClassLoader classLoader = getClassLoader(jar);
+        URLClassLoader classLoader = Utils.getClassLoader(jar);
         try (InputStream s = classLoader.getResource(file).openStream()) {
             var json = s.readAllBytes();
             var objJson = mapper.readTree(json);
@@ -33,19 +33,10 @@ public class CodeGenerator {
             var objToProcess = objJson.fields().next().getValue();
             var clazz = Utils.getClass(_package + "." + className);
             Converter converter = converterFactory.createConverter(clazz);
-            var str = converter.convert(objToProcess, clazz);
-            System.out.println(str);
+            return converter.convert(objToProcess, clazz);
         } catch (IOException e) {
             throw new RuntimeException("File " + file + " cannot be found, please check your configuration", e);
         }
-        return null;
     }
 
-    private URLClassLoader getClassLoader(String jar) {
-        try {
-            return new URLClassLoader(new URL[]{new File(jar).toURI().toURL()});
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("JAR " + jar + " cannot be found, please check your configuration", e);
-        }
-    }
 }
