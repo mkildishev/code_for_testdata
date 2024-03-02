@@ -50,7 +50,7 @@ public class Utils {
 
     public static URLClassLoader getClassLoader(String jar) {
         try {
-            return new URLClassLoader(new URL[]{new File(jar).toURI().toURL()});
+            return new URLClassLoader(new URL[]{new URL("file","", jar)});
         } catch (MalformedURLException e) {
             throw new RuntimeException("JAR " + jar + " cannot be found, please check your configuration", e);
         }
