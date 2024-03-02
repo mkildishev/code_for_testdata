@@ -3,6 +3,7 @@ package com.mkildishev.generator.converter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
 import com.mkildishev.generator.utils.Utils;
+import org.codehaus.plexus.util.StringUtils;
 
 import java.lang.reflect.Type;
 import java.util.Iterator;
@@ -44,7 +45,7 @@ public class CustomConverter implements Converter {
     }
 
     private String makeSetter(String object, String method) {
-        return object + "." + "set" + capitalize(method) + "(" + popName() + ");" + '\n';
+        return object + "." + "set" + StringUtils.capitalise(method) + "(" + popName() + ");" + '\n';
     }
 
 

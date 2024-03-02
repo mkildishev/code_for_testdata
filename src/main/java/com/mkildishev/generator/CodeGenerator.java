@@ -4,12 +4,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mkildishev.generator.converter.Converter;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
 import com.mkildishev.generator.utils.Utils;
+import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLClassLoader;
 // Можно ли улучшить то, что есть здесь?
 // Есть ли смысл разделять создание объектов для примитивов и сложных объектов?
@@ -23,19 +21,19 @@ public class CodeGenerator {
     }
 
 
-    public String generate(String file, String jar, String _package) {
+    public String generate(String jsonFile, String jar, String modelPackage) {
         ObjectMapper mapper = new ObjectMapper();
         URLClassLoader classLoader = Utils.getClassLoader(jar);
-        try (InputStream s = classLoader.getResource(file).openStream()) {
+        try (InputStream s = classLoader.getResource(jsonFile).openStream()) {
             var json = s.readAllBytes();
             var objJson = mapper.readTree(json);
-            var className = Utils.capitalize(objJson.fields().next().getKey());
+            var className = StringUtils.capitalise(objJson.fields().next().getKey());
             var objToProcess = objJson.fields().next().getValue();
-            var clazz = Utils.getClass(_package + "." + className);
+            var clazz = Utils.getClass(modelPackage + "." + className);
             Converter converter = converterFactory.createConverter(clazz);
             return converter.convert(objToProcess, clazz);
         } catch (IOException e) {
-            throw new RuntimeException("File " + file + " cannot be found, please check your configuration", e);
+            throw new RuntimeException("File " + jsonFile + " cannot be found, please check your configuration", e);
         }
     }
 

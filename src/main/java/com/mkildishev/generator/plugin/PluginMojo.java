@@ -11,21 +11,21 @@ import org.apache.maven.plugins.annotations.Parameter;
 public class PluginMojo extends AbstractMojo {
 
 
-    @Parameter(property = "file")
-    private String file;
+    @Parameter(property = "jsonFile")
+    private String jsonFile;
 
 
     @Parameter(property = "jar")
     private String jar;
 
-    @Parameter(property = "package")
-    private String _package;
+    @Parameter(property = "packageName")
+    private String modelPackage;
 
     @Override
     public void execute() throws MojoExecutionException
     {
         CodeGenerator generator = new CodeGenerator();
-        var result = generator.generate(file, jar, _package);
+        var result = generator.generate(jsonFile, jar, modelPackage);
         Utils.saveFile("output.txt", result);
     }
 }

@@ -1,5 +1,7 @@
 package com.mkildishev.generator.utils;
 
+import org.codehaus.plexus.util.StringUtils;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -11,10 +13,6 @@ import java.net.URL;
 import java.net.URLClassLoader;
 
 public class Utils {
-
-    public static String capitalize(String str) {
-        return str.substring(0, 1).toUpperCase() + str.substring(1);
-    }
 
     public static String makeObject(String type, String obj) {
         return type + " " + obj + " = " + "new " + type + "();\n";
