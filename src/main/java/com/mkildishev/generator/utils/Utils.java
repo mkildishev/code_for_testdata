@@ -30,11 +30,9 @@ public class Utils {
         }
     }
 
-    public static void saveFile(String fileName, String content) {
+    public static void saveFile(String path, String fileName, String content) {
 
-        String currentDir = System.getProperty("user.dir");
-        String targetDirectoryPath = currentDir + "/generated-testdata";
-        File targetDirectory = new File(targetDirectoryPath);
+        File targetDirectory = new File(path);
 
         if (!targetDirectory.exists()) {
             targetDirectory.mkdirs();

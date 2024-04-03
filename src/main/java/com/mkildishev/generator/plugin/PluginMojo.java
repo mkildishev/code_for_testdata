@@ -26,6 +26,7 @@ public class PluginMojo extends AbstractMojo {
     {
         CodeGenerator generator = new CodeGenerator();
         var result = generator.generate(jsonFile, jar, modelPackage);
-        Utils.saveFile("output.txt", result);
+        String targetDirectoryPath = System.getProperty("user.dir") + "/generated-testdata";
+        Utils.saveFile(targetDirectoryPath,"output.txt", result);
     }
 }
