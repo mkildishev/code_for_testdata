@@ -1,14 +1,21 @@
 {
-  "nestedTestClass": {
-    "list": [
-      [
-        "prop1",
-        "prop2"
-      ],
-      [
-        "prop3",
-        "prop4"
-      ]
-    ]
+  "testClass":
+  {
+    "id": 123,
+    "name": "TeStClass",
+    "price": 13.37,
+    "stringProperties": [
+      "prop1",
+      "prop2",
+      "prop3"
+    ],
+    "mapProperties": {
+      "key1": 333,
+      "key2": 444
+    },
+    "objectProperties": {
+      "id": 222,
+      "name": "nested"
+    }
   }
 }

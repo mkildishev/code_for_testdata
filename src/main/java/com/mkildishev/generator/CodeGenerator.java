@@ -24,21 +24,12 @@ public class CodeGenerator {
 
 
     public String generate(String jsonFile, String jar, String modelPackage) {
-        ObjectMapper mapper = new ObjectMapper();
-        URLClassLoader classLoader = Utils.getClassLoader(jar);
-        try (InputStream s = Objects.requireNonNull(classLoader.getResource(jsonFile)).openStream()) {
-            var json = s.readAllBytes();
-            var objJson = mapper.readTree(json);
-            var className = StringUtils.capitalise(objJson.fields().next().getKey());
-            var objToProcess = objJson.fields().next().getValue();
-            var clazz = Utils.getClass(modelPackage + "." + className);
-            Converter converter = converterFactory.createConverter(clazz);
-            return converter.convert(objToProcess, clazz);
-        } catch (IOException e) {
-            throw new RuntimeException("File " + jsonFile + " cannot be found, please check your configuration", e);
-        } catch (NullPointerException e) {
-            throw new RuntimeException("JAR " + jar + " cannot be found, please check your configuration", e);
-        }
+        var objJson = Utils.getResource(jsonFile, jar);
+        var className = StringUtils.capitalise(objJson.fields().next().getKey());
+        var objToProcess = objJson.fields().next().getValue();
+        var clazz = Utils.getClass(modelPackage + "." + className);
+        Converter converter = converterFactory.createConverter(clazz);
+        return converter.convert(objToProcess, clazz);
     }
 
 }

@@ -1,16 +1,16 @@
 package com.mkildishev.generator.utils;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.codehaus.plexus.util.StringUtils;
 
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Objects;
 
 public class Utils {
 
@@ -46,7 +46,22 @@ public class Utils {
         }
     }
 
-    public static URLClassLoader getClassLoader(String jar) {
+    public static JsonNode getResource(String resourceName, String jarName) {
+        ObjectMapper mapper = new ObjectMapper();
+        URLClassLoader classLoader = Utils.getClassLoader(jarName);
+        URL resourceUrl = Objects.requireNonNull(classLoader.getResource(resourceName));
+        try (InputStream s = resourceUrl.openStream()) {
+            var json = s.readAllBytes();
+            var objJson = mapper.readTree(json);
+            return objJson;
+        } catch (IOException e) {
+            throw new RuntimeException("File " + resourceName + " cannot be found, please check your configuration", e);
+        } catch (NullPointerException e) {
+            throw new RuntimeException("JAR " + jarName + " cannot be found, please check your configuration", e);
+        }
+    }
+
+    private static URLClassLoader getClassLoader(String jar) {
         try {
             return new URLClassLoader(new URL[]{new URL("file","", jar)});
         } catch (MalformedURLException e) {
