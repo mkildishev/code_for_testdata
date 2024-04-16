@@ -1,15 +1,9 @@
 package com.mkildishev.generator;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mkildishev.generator.converter.Converter;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
 import com.mkildishev.generator.utils.Utils;
 import org.codehaus.plexus.util.StringUtils;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLClassLoader;
-import java.util.Objects;
 
 // Можно ли улучшить то, что есть здесь?
 // Есть ли смысл разделять создание объектов для примитивов и сложных объектов?

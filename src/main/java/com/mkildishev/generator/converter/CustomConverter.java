@@ -11,7 +11,7 @@ import java.util.Map;
 
 import static com.mkildishev.generator.builder.NameBuilder.getName;
 import static com.mkildishev.generator.builder.NameBuilder.popName;
-import static com.mkildishev.generator.utils.Utils.*;
+import static com.mkildishev.generator.utils.Utils.makeObject;
 
 public class CustomConverter implements Converter {
 
