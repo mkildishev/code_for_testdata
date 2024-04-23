@@ -13,5 +13,5 @@ public class TestClass {
     private BigDecimal price;
     private List<String> stringProperties;
     private Map<String, Integer> mapProperties;
-    private NestedTestClass objectProperties;
+   // private NestedTestClass objectProperties;
 }

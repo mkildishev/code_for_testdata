@@ -1,0 +1,9 @@
+{
+  "simpleListModel": {
+    "stringProperties": [
+      "prop1",
+      "prop2",
+      "prop3"
+    ]
+  }
+}

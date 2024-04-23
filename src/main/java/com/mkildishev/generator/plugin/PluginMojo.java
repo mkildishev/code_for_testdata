@@ -1,6 +1,7 @@
 package com.mkildishev.generator.plugin;
 
 import com.mkildishev.generator.CodeGenerator;
+import com.mkildishev.generator.utils.ClassLoaderUtils;
 import com.mkildishev.generator.utils.Utils;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.project.MavenProject;
@@ -24,8 +25,9 @@ public class PluginMojo extends AbstractMojo {
     @Override
     public void execute() throws MojoExecutionException
     {
-        CodeGenerator generator = new CodeGenerator();
-        var result = generator.generate(jsonFile, modelPackage, project);
+        ClassLoaderUtils classLoaderUtils = new ClassLoaderUtils(project);
+        CodeGenerator generator = new CodeGenerator(classLoaderUtils.getClassLoader());
+        var result = generator.generate(jsonFile, modelPackage);
         String targetDirectoryPath = System.getProperty("user.dir") + "/generated-testdata";
         Utils.saveFile(targetDirectoryPath,"output.txt", result);
     }

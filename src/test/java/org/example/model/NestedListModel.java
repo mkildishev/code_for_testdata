@@ -5,6 +5,6 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class NestedListClass {
+public class NestedListModel {
     List<List<String>> list;
 }
