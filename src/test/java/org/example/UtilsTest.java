@@ -4,6 +4,7 @@ import com.mkildishev.generator.utils.Utils;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.junit.jupiter.api.io.TempDir;
 
 import java.io.File;
@@ -14,6 +15,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UtilsTest {
 
     @TempDir
@@ -90,28 +92,28 @@ public class UtilsTest {
     @Test
     @DisplayName("No throws in jar exists")
     void noThrowsIfJarExists() {
-        Assertions.assertDoesNotThrow(() -> Utils.getResource("test.json", "somejar.json"));
+        Assertions.assertDoesNotThrow(() -> Utils.getResource("test.json"));
     }
 
     @Test
     @DisplayName("Throws if no jar exists")
     void throwsIfNoJarExists() {
         Assertions.assertThrows(RuntimeException.class,
-                () -> Utils.getResource("somename.json", "somejar.json"));
+                () -> Utils.getResource("somename.json"));
     }
 
     @Test
     @DisplayName("Throws NPE if no resource exists")
     void throwsNPEIfNoResourceExists() {
         Assertions.assertThrows(NullPointerException.class,
-                () -> Utils.getResource("somename.json", "simple-test-1.0-SNAPSHOT.jar"));
+                () -> Utils.getResource("somename.json"));
     }
 
     @Test
     @DisplayName("Can get named resource from jar")
     void canGetNamedResourceFromJar() {
         var expectedData = "{\"testClass\":{\"id\":123,\"name\":\"TeStClass\",\"price\":13.37,\"stringProperties\":[\"prop1\",\"prop2\",\"prop3\"],\"mapProperties\":{\"key1\":333,\"key2\":444},\"objectProperties\":{\"id\":222,\"name\":\"nested\"}}}";
-        var actualData = String.valueOf(Utils.getResource("test.json", "simple-test-1.0-SNAPSHOT.jar"));
+        var actualData = String.valueOf(Utils.getResource("test.json"));
         Assertions.assertEquals(expectedData, actualData);
     }
 

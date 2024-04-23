@@ -2,14 +2,11 @@ package com.mkildishev.generator.utils;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.codehaus.plexus.util.StringUtils;
 
 import java.io.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.Objects;
 
 public class Utils {
@@ -24,9 +21,11 @@ public class Utils {
 
     public static Class<?> getClass(String clazz) {
         try {
-            return Class.forName(clazz);
+            return Class.forName(clazz, false, Thread.currentThread().getContextClassLoader());
         } catch (ClassNotFoundException e) {
-            throw new RuntimeException("Class " + clazz + " cannot be found. Please, check your configuration", e);
+            String message = "Class " + clazz + " cannot be found. Please, check your configuration";
+            System.out.println(message);
+            throw new RuntimeException(message, e);
         }
     }
 
@@ -46,9 +45,9 @@ public class Utils {
         }
     }
 
-    public static JsonNode getResource(String resourceName, String jarName) {
+    public static JsonNode getResource(String resourceName) {
         ObjectMapper mapper = new ObjectMapper();
-        URLClassLoader classLoader = Utils.getClassLoader(jarName);
+        ClassLoader classLoader = Utils.getClassLoader();
         URL resourceUrl = Objects.requireNonNull(classLoader.getResource(resourceName));
         try (InputStream s = resourceUrl.openStream()) {
             var json = s.readAllBytes();
@@ -56,16 +55,11 @@ public class Utils {
             return objJson;
         } catch (IOException e) {
             throw new RuntimeException("File " + resourceName + " cannot be found, please check your configuration", e);
-        } catch (NullPointerException e) {
-            throw new RuntimeException("JAR " + jarName + " cannot be found, please check your configuration", e);
         }
     }
 
-    private static URLClassLoader getClassLoader(String jar) {
-        try {
-            return new URLClassLoader(new URL[]{new URL("file","", jar)});
-        } catch (MalformedURLException e) {
-            throw new RuntimeException("JAR " + jar + " cannot be found, please check your configuration", e);
-        }
+    private static ClassLoader getClassLoader() {
+        return Thread.currentThread().getContextClassLoader();
     }
+
 }
