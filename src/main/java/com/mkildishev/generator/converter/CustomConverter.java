@@ -25,7 +25,7 @@ public class CustomConverter implements Converter {
     public String convert(JsonNode node, Type type) {
         StringBuilder result = new StringBuilder();
         var objectName = getName();
-        result.append(makeObject(type.getTypeName(), objectName));
+        result.append(makeObject(((Class<?>) type).getSimpleName(), objectName));
         Class<?> clazz = Utils.getClass(type.getTypeName());
         for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
             try {

@@ -45,6 +45,26 @@ public class Utils {
         }
     }
 
+    public static String getGenericSimpleName(Type type) {
+        Type rawType = ((ParameterizedType) type).getRawType();
+        StringBuilder rawTypeName = new StringBuilder(((Class<?>) rawType).getSimpleName());
+        rawTypeName.append("<");
+        Type[] genericArgs = ((ParameterizedType) type).getActualTypeArguments();
+        for (int i = 0; i < genericArgs.length; i++) {
+            if (genericArgs[i] instanceof ParameterizedType) {
+                rawTypeName.append(getGenericSimpleName(genericArgs[i]));
+            } else {
+                Class<?> argClass = (Class<?>) genericArgs[i];
+                rawTypeName.append(argClass.getSimpleName());
+                if (i < genericArgs.length - 1) {
+                    rawTypeName.append(", ");
+                }
+            }
+        }
+        rawTypeName.append(">");
+        return rawTypeName.toString();
+    }
+
     public static JsonNode getResource(String resourceName) {
         ObjectMapper mapper = new ObjectMapper();
         ClassLoader classLoader = Utils.getClassLoader();

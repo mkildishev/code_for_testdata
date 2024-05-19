@@ -2,6 +2,7 @@ package com.mkildishev.generator.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
+import com.mkildishev.generator.utils.Utils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -29,7 +30,7 @@ public class ListConverter implements Converter {
             result.append(converter.convert(v, ((ParameterizedType) type).getActualTypeArguments()[0]));
             elementNames.add(popName());
         }
-        result.append(makeList(type.getTypeName(), elementNames));
+        result.append(makeList(Utils.getGenericSimpleName(type), elementNames));
         return result.toString();
     }
 

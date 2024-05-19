@@ -21,4 +21,9 @@ public class NameBuilder {
         }
         return nameStack.pop();
     }
+
+    public static void reset() {
+        variableCounter = BigInteger.ZERO;
+        nameStack.clear();
+    }
 }

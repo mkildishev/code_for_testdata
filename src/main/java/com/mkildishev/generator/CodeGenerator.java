@@ -1,5 +1,6 @@
 package com.mkildishev.generator;
 
+import com.mkildishev.generator.builder.NameBuilder;
 import com.mkildishev.generator.converter.Converter;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
 import com.mkildishev.generator.utils.ClassLoaderUtils;
@@ -23,7 +24,9 @@ public class CodeGenerator {
         var objToProcess = objJson.fields().next().getValue();
         var clazz = Utils.getClass(modelPackage + "." + className);
         Converter converter = converterFactory.createConverter(clazz);
-        return converter.convert(objToProcess, clazz);
+        var result = converter.convert(objToProcess, clazz);
+        NameBuilder.reset();
+        return result;
     }
 
 

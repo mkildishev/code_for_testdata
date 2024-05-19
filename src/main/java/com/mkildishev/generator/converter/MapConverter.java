@@ -3,6 +3,7 @@ package com.mkildishev.generator.converter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.TextNode;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
+import com.mkildishev.generator.utils.Utils;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -25,7 +26,7 @@ public class MapConverter implements Converter {
     public String convert(JsonNode node, Type type) {
         StringBuilder result = new StringBuilder();
         var objectName = getName();
-        result.append(makeObject(type.getTypeName(), objectName));
+        result.append(makeObject(Utils.getGenericSimpleName(type), objectName));
         for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
             var entry = it.next();
             Converter converter = converterFactory.createConverter(String.class);

@@ -14,12 +14,19 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class UtilsTest {
 
     @TempDir
     File tempDirectory;
+
+    private List<String> listString;
+
+    private Map<String, List<String>> mapList;
+
+    private List<List<Integer>> nestedList;
 
     @Test
     @DisplayName("Make Object Is Able To Create Correct String")
@@ -115,6 +122,33 @@ public class UtilsTest {
         var expectedData = "{\"testClass\":{\"id\":123,\"name\":\"TeStClass\",\"price\":13.37,\"stringProperties\":[\"prop1\",\"prop2\",\"prop3\"],\"mapProperties\":{\"key1\":333,\"key2\":444},\"objectProperties\":{\"id\":222,\"name\":\"nested\"}}}";
         var actualData = String.valueOf(Utils.getResource("test.json"));
         Assertions.assertEquals(expectedData, actualData);
+    }
+
+    @Test
+    @DisplayName("Can get generic list name")
+    void canGetGenericListName() throws NoSuchFieldException {
+        Type type = UtilsTest.class.getDeclaredField("listString").getGenericType();
+        var expectedName = "List<String>";
+        var actualName = Utils.getGenericSimpleName(type);
+        Assertions.assertEquals(expectedName, actualName);
+    }
+
+    @Test
+    @DisplayName("Can get generic map name")
+    void getGeneticMapName() throws NoSuchFieldException {
+        Type type = UtilsTest.class.getDeclaredField("mapList").getGenericType();
+        var expectedName = "Map<String, List<String>>";
+        var actualName = Utils.getGenericSimpleName(type);
+        Assertions.assertEquals(expectedName, actualName);
+    }
+
+    @Test
+    @DisplayName("Can get generic nested list name")
+    void getGenericNestedListName() throws NoSuchFieldException  {
+        Type type = UtilsTest.class.getDeclaredField("nestedList").getGenericType();
+        var expectedName = "List<List<Integer>>";
+        var actualName = Utils.getGenericSimpleName(type);
+        Assertions.assertEquals(expectedName, actualName);
     }
 
 }
