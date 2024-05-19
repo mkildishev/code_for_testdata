@@ -1,0 +1,12 @@
+{
+  "nestedMapModel": {
+    "mapProperty": {
+      "key1": {
+        "nestedKey1": "kek"
+      },
+      "key2": {
+        "nestedKey2": "kek x2"
+      }
+    }
+  }
+}
