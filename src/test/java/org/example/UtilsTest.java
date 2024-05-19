@@ -135,7 +135,7 @@ public class UtilsTest {
 
     @Test
     @DisplayName("Can get generic map name")
-    void getGeneticMapName() throws NoSuchFieldException {
+    void canGetGenericMapName() throws NoSuchFieldException {
         Type type = UtilsTest.class.getDeclaredField("mapList").getGenericType();
         var expectedName = "Map<String, List<String>>";
         var actualName = Utils.getGenericSimpleName(type);
@@ -144,10 +144,28 @@ public class UtilsTest {
 
     @Test
     @DisplayName("Can get generic nested list name")
-    void getGenericNestedListName() throws NoSuchFieldException  {
+    void canGetGenericNestedListName() throws NoSuchFieldException  {
         Type type = UtilsTest.class.getDeclaredField("nestedList").getGenericType();
         var expectedName = "List<List<Integer>>";
         var actualName = Utils.getGenericSimpleName(type);
+        Assertions.assertEquals(expectedName, actualName);
+    }
+
+    @Test
+    @DisplayName("Can get list simple name")
+    void canGetListSimpleName() throws NoSuchFieldException {
+        Type type = UtilsTest.class.getDeclaredField("listString").getGenericType();
+        var expectedName = "List";
+        var actualName = Utils.getSimpleName(type);
+        Assertions.assertEquals(expectedName, actualName);
+    }
+
+    @Test
+    @DisplayName("Can get map simple name")
+    void canGetMapSimpleName() throws NoSuchFieldException {
+        Type type = UtilsTest.class.getDeclaredField("mapList").getGenericType();
+        var expectedName = "Map";
+        var actualName = Utils.getSimpleName(type);
         Assertions.assertEquals(expectedName, actualName);
     }
 

@@ -65,6 +65,15 @@ public class Utils {
         return rawTypeName.toString();
     }
 
+    public static String getSimpleName(Type type) {
+        if (isGenericType(type)) {
+            Type rawType = ((ParameterizedType) type).getRawType();
+            return ((Class<?>) rawType).getSimpleName();
+        } else {
+            return ((Class<?>) type).getSimpleName();
+        }
+    }
+
     public static JsonNode getResource(String resourceName) {
         ObjectMapper mapper = new ObjectMapper();
         ClassLoader classLoader = Utils.getClassLoader();
