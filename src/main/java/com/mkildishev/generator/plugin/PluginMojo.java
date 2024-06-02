@@ -4,7 +4,6 @@ import com.mkildishev.generator.CodeGenerator;
 import com.mkildishev.generator.utils.ClassLoaderUtils;
 import com.mkildishev.generator.utils.Utils;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
@@ -23,7 +22,7 @@ public class PluginMojo extends AbstractMojo {
     private MavenProject project;
 
     @Override
-    public void execute() throws MojoExecutionException
+    public void execute()
     {
         ClassLoaderUtils classLoaderUtils = new ClassLoaderUtils(project);
         CodeGenerator generator = new CodeGenerator(classLoaderUtils.getClassLoader());

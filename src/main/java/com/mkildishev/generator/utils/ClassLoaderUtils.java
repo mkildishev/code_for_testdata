@@ -12,7 +12,7 @@ public class ClassLoaderUtils {
 
     ClassLoader classLoader;
 
-    public ClassLoaderUtils(MavenProject project) throws MojoExecutionException {
+    public ClassLoaderUtils(MavenProject project) {
         try
         {
             List<String> classpathElements = project.getCompileClasspathElements();
@@ -28,7 +28,7 @@ public class ClassLoaderUtils {
         }
         catch (Exception e)
         {
-            throw new MojoExecutionException("Couldn't create a classloader.", e);
+            throw new RuntimeException("Couldn't create a classloader.", e);
         }
     }
 

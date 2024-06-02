@@ -24,8 +24,7 @@ public class Utils {
             return Class.forName(clazz, false, Thread.currentThread().getContextClassLoader());
         } catch (ClassNotFoundException e) {
             String message = "Class " + clazz + " cannot be found. Please, check your configuration";
-            System.out.println(message);
-            throw new RuntimeException(message, e);
+            throw new RuntimeException(message);
         }
     }
 
@@ -78,7 +77,7 @@ public class Utils {
         if (isGenericType(type)) {
             return ((ParameterizedType) type).getActualTypeArguments()[1];
         }
-        throw new IllegalArgumentException("Unknown type");
+        throw new IllegalArgumentException("Unknown type " + type.getTypeName());
     }
 
     public static JsonNode getResource(String resourceName) {
@@ -90,7 +89,7 @@ public class Utils {
             var objJson = mapper.readTree(json);
             return objJson;
         } catch (IOException e) {
-            throw new RuntimeException("File " + resourceName + " cannot be found, please check your configuration", e);
+            throw new RuntimeException("File " + resourceName + " cannot be found, please check your configuration");
         }
     }
 

@@ -37,7 +37,7 @@ public class CustomConverter implements Converter {
                 result.append(typeConverter.convert(value, field.getGenericType()));
                 result.append(makeSetter(objectName, field.getName()));
             } catch (NoSuchFieldException e) {
-                System.out.println("Field cannot be found");
+                throw new RuntimeException("Field cannot be found: " + e.getMessage());
             }
 
         }
