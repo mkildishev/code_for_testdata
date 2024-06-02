@@ -15,7 +15,7 @@ import static com.mkildishev.generator.utils.Utils.makeObject;
 
 public class CustomConverter implements Converter {
 
-    private ConverterFactory converterFactory;
+    private final ConverterFactory converterFactory;
 
     public CustomConverter(ConverterFactory converterFactory) {
         this.converterFactory = converterFactory;

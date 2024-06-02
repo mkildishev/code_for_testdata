@@ -74,6 +74,13 @@ public class Utils {
         }
     }
 
+    public static Type getMapValueType(Type type) {
+        if (isGenericType(type)) {
+            return ((ParameterizedType) type).getActualTypeArguments()[1];
+        }
+        throw new IllegalArgumentException("Unknown type");
+    }
+
     public static JsonNode getResource(String resourceName) {
         ObjectMapper mapper = new ObjectMapper();
         ClassLoader classLoader = Utils.getClassLoader();

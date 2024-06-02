@@ -1,7 +1,6 @@
 package org.example;
 
 import com.mkildishev.generator.CodeGenerator;
-import com.mkildishev.generator.utils.ClassLoaderUtils;
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)

@@ -7,7 +7,7 @@ public class NameBuilder {
 
     private static BigInteger variableCounter = BigInteger.valueOf(0);
 
-    private static Stack<String> nameStack = new Stack<>();
+    private static final Stack<String> nameStack = new Stack<>();
 
     public static String getName() {
         variableCounter = variableCounter.add(BigInteger.ONE);

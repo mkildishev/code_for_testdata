@@ -3,9 +3,7 @@ package com.mkildishev.generator;
 import com.mkildishev.generator.builder.NameBuilder;
 import com.mkildishev.generator.converter.Converter;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
-import com.mkildishev.generator.utils.ClassLoaderUtils;
 import com.mkildishev.generator.utils.Utils;
-import org.apache.maven.plugin.MojoExecutionException;
 import org.codehaus.plexus.util.StringUtils;
 
 public class CodeGenerator {

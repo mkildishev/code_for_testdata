@@ -4,11 +4,11 @@ import com.mkildishev.generator.CodeGenerator;
 import com.mkildishev.generator.utils.ClassLoaderUtils;
 import com.mkildishev.generator.utils.Utils;
 import org.apache.maven.plugin.AbstractMojo;
-import org.apache.maven.project.MavenProject;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.apache.maven.project.MavenProject;
 
 @Mojo(name = "generate", requiresDependencyResolution = ResolutionScope.RUNTIME)
 public class PluginMojo extends AbstractMojo {

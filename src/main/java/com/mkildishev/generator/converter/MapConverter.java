@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.node.TextNode;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
 import com.mkildishev.generator.utils.Utils;
 
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Map;
@@ -16,7 +15,7 @@ import static com.mkildishev.generator.utils.Utils.makeObject;
 
 public class MapConverter implements Converter {
 
-    private ConverterFactory converterFactory;
+    private final ConverterFactory converterFactory;
 
     public MapConverter(ConverterFactory converterFactory) {
         this.converterFactory = converterFactory;
@@ -31,8 +30,8 @@ public class MapConverter implements Converter {
             var entry = it.next();
             Converter converter = converterFactory.createConverter(String.class);
             result.append(converter.convert(new TextNode(entry.getKey()), String.class)); // сделать отдельный метод для строки?
-            converter = converterFactory.createConverter(((ParameterizedType) type).getActualTypeArguments()[1]);
-            result.append(converter.convert(entry.getValue(), ((ParameterizedType) type).getActualTypeArguments()[1]));
+            converter = converterFactory.createConverter(Utils.getMapValueType(type));
+            result.append(converter.convert(entry.getValue(), Utils.getMapValueType(type)));
             result.append(putIntoMap(objectName));
         }
         return result.toString();

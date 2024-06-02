@@ -14,13 +14,12 @@ import static com.mkildishev.generator.builder.NameBuilder.popName;
 
 public class ListConverter implements Converter {
 
-    private ConverterFactory converterFactory;
+    private final ConverterFactory converterFactory;
 
     public ListConverter(ConverterFactory converterFactory) {
         this.converterFactory = converterFactory;
     }
 
-    // Создание мейкера и генерация строки повторяется
     @Override
     public String convert(JsonNode node, Type type) {
         StringBuilder result = new StringBuilder();
