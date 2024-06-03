@@ -11,7 +11,7 @@ public class ConverterFactory {
 
     private final Map<String, Converter> converters = new HashMap<>();
 
-    {
+    public ConverterFactory() {
         converters.put("Integer", new IntegerConverter());
         converters.put("BigDecimal", new BigDecimalConverter());
         converters.put("String", new StringConverter());
@@ -20,7 +20,6 @@ public class ConverterFactory {
     }
 
     public Converter createConverter(Type type) {
-        Converter converter = converters.get(Utils.getSimpleName(type));
-        return converter != null ? converter : new CustomConverter(this);
+        return converters.getOrDefault(Utils.getSimpleName(type), new CustomConverter(this));
     }
 }

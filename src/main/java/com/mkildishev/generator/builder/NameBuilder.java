@@ -5,7 +5,7 @@ import java.util.Stack;
 
 public class NameBuilder {
 
-    private static BigInteger variableCounter = BigInteger.valueOf(0);
+    private static BigInteger variableCounter = BigInteger.ZERO;
 
     private static final Stack<String> nameStack = new Stack<>();
 
@@ -16,10 +16,7 @@ public class NameBuilder {
     }
 
     public static String popName() {
-        if (nameStack.isEmpty()) {
-            return "stub";
-        }
-        return nameStack.pop();
+        return !nameStack.isEmpty() ? nameStack.pop() : "defaultName";
     }
 
     public static void reset() {
