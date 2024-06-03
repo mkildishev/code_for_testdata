@@ -9,6 +9,6 @@ import static com.mkildishev.generator.builder.NameBuilder.getName;
 public class StringConverter implements Converter {
     @Override
     public String convert(JsonNode node, Type type) {
-        return "String " + getName() + " = \"" + node.asText() + "\";\n";
+        return  String.format("String %s = \"%s\";\n", getName(), node.asText());
     }
 }

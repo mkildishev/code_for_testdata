@@ -9,6 +9,6 @@ import static com.mkildishev.generator.builder.NameBuilder.getName;
 public class IntegerConverter implements Converter {
     @Override
     public String convert(JsonNode node, Type type) {
-        return "Integer " + getName() + " = " + "Integer.valueOf(\"" + node.asText() + "\");\n";
+        return String.format("Integer %s = Integer.valueOf(\"%s\");\n", getName(), node.asText());
     }
 }

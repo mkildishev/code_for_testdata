@@ -34,6 +34,6 @@ public class ListConverter implements Converter {
     }
 
     private String makeList(String type, List<String> values) {
-        return type + " " + getName() + " = " + "List.of(" + String.join(", ", values) + ");\n";
+        return String.format("%s %s = List.of(%s);\n", type, getName(), String.join(", ", values));
     }
 }

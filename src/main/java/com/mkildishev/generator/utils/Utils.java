@@ -7,6 +7,9 @@ import java.io.*;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
 public class Utils {
@@ -30,17 +33,21 @@ public class Utils {
 
     public static void saveFile(String path, String fileName, String content) {
 
-        File targetDirectory = new File(path);
+        Path targetDirectory = Paths.get(path);
 
-        if (!targetDirectory.exists()) {
-            targetDirectory.mkdirs();
+        if (!Files.exists(targetDirectory)) {
+            try {
+                Files.createDirectory(targetDirectory);
+            } catch (IOException e) {
+                throw new RuntimeException("Couldn't create target directory: " + path, e);
+            }
         }
 
-        File outputFile = new File(targetDirectory, fileName);
-        try (PrintWriter writer = new PrintWriter(new FileWriter(outputFile))) {
-            writer.println(content);
+        Path outputFile = targetDirectory.resolve(fileName);
+        try {
+            Files.writeString(outputFile, content);
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException("Couldn't save file: " + outputFile, e);
         }
     }
 
