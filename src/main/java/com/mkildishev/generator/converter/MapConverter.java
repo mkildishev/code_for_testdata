@@ -20,7 +20,7 @@ public class MapConverter implements Converter {
     public MapConverter(ConverterFactory converterFactory) {
         this.converterFactory = converterFactory;
     }
-    // Можно ли MapConverter унаследовать от Custom?
+
     @Override
     public String convert(JsonNode node, Type type) {
         StringBuilder result = new StringBuilder();
@@ -29,7 +29,7 @@ public class MapConverter implements Converter {
         for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
             var entry = it.next();
             Converter converter = converterFactory.createConverter(String.class);
-            result.append(converter.convert(new TextNode(entry.getKey()), String.class)); // сделать отдельный метод для строки?
+            result.append(converter.convert(new TextNode(entry.getKey()), String.class));
             converter = converterFactory.createConverter(Utils.getMapValueType(type));
             result.append(converter.convert(entry.getValue(), Utils.getMapValueType(type)));
             result.append(putIntoMap(objectName));

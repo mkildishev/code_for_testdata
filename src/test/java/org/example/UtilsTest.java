@@ -86,7 +86,7 @@ public class UtilsTest {
     @DisplayName("Can save file with content")
     void canSaveFileWithContent() throws IOException {
         File expectedFile = new File(tempDirectory, "expectedFile.txt");
-        List<String> content = List.of("List<String> a = new ArrayList<>();", "a.add(\"one\")"); // why comma in debug?
+        List<String> content = List.of("List<String> a = new ArrayList<>();", "a.add(\"one\")");
         Files.write(expectedFile.toPath(), content);
         Utils.saveFile(tempDirectory.getPath(), "actualFile.txt", "List<String> a = new ArrayList<>();\na.add(\"one\")");
         Path actualFilePath = Path.of(tempDirectory.getPath(), "actualFile.txt");
