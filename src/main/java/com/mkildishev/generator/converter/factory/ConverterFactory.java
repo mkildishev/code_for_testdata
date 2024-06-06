@@ -17,6 +17,7 @@ public class ConverterFactory {
         converters.put("String", new StringConverter());
         converters.put("Map", new MapConverter(this));
         converters.put("List", new ListConverter(this));
+        converters.put("Set", new SetConverter(this));
     }
 
     public Converter createConverter(Type type) {
