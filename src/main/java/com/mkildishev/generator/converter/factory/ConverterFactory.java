@@ -12,9 +12,9 @@ public class ConverterFactory {
     private final Map<String, Converter> converters = new HashMap<>();
 
     public ConverterFactory() {
-        converters.put("Integer", new IntegerConverter());
-        converters.put("BigDecimal", new BigDecimalConverter());
-        converters.put("String", new StringConverter());
+        converters.put("Integer", new SimpleConverter());
+        converters.put("BigDecimal", new SimpleConverter());
+        converters.put("String", new SimpleConverter());
         converters.put("Map", new MapConverter(this));
         converters.put("List", new ListConverter(this));
         converters.put("Set", new SetConverter(this));

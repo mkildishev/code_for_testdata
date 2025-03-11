@@ -18,9 +18,9 @@ public class ListTest {
         String actualResult = codeGenerator.generate("simpleListTest.json", "org.example.model");
         String expectedResult = """
                 SimpleListModel v1 = new SimpleListModel();
-                String v2 = "prop1";
-                String v3 = "prop2";
-                String v4 = "prop3";
+                String v2 = String.valueOf("prop1");
+                String v3 = String.valueOf("prop2");
+                String v4 = String.valueOf("prop3");
                 List<String> v5 = List.of(v2, v3, v4);
                 v1.setStringProperties(v5);
                 """;
@@ -32,12 +32,12 @@ public class ListTest {
     public void canProcessNestedList() {
         String expectedResult = """
                 NestedListModel v1 = new NestedListModel();
-                String v2 = "prop1";
+                String v2 = String.valueOf("prop1");
                 List<String> v3 = List.of(v2);
-                String v4 = "prop2";
+                String v4 = String.valueOf("prop2");
                 List<String> v5 = List.of(v4);
-                String v6 = "prop3";
-                String v7 = "prop4";
+                String v6 = String.valueOf("prop3");
+                String v7 = String.valueOf("prop4");
                 List<String> v8 = List.of(v6, v7);
                 List<List<String>> v9 = List.of(v3, v5, v8);
                 v1.setList(v9);

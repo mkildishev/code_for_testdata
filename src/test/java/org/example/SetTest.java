@@ -19,9 +19,9 @@ public class SetTest {
         String actualResult = codeGenerator.generate("simpleSetTest.json", "org.example.model");
         String expectedResult = """
                 SimpleSetModel v1 = new SimpleSetModel();
-                String v2 = "prop1";
-                String v3 = "prop2";
-                String v4 = "prop3";
+                String v2 = String.valueOf("prop1");
+                String v3 = String.valueOf("prop2");
+                String v4 = String.valueOf("prop3");
                 Set<String> v5 = Set.of(v2, v3, v4);
                 v1.setStringProperties(v5);
                 """;
@@ -33,12 +33,12 @@ public class SetTest {
     void canProcessNestedSet() {
         String expectedResult = """
                 NestedSetModel v1 = new NestedSetModel();
-                String v2 = "prop1";
+                String v2 = String.valueOf("prop1");
                 Set<String> v3 = Set.of(v2);
-                String v4 = "prop2";
+                String v4 = String.valueOf("prop2");
                 Set<String> v5 = Set.of(v4);
-                String v6 = "prop3";
-                String v7 = "prop4";
+                String v6 = String.valueOf("prop3");
+                String v7 = String.valueOf("prop4");
                 Set<String> v8 = Set.of(v6, v7);
                 Set<Set<String>> v9 = Set.of(v3, v5, v8);
                 v1.setSet(v9);
