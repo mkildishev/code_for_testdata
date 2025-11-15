@@ -3,7 +3,6 @@ package com.mkildishev.generator.converter;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
 import com.mkildishev.generator.utils.Utils;
-import org.apache.commons.lang3.NotImplementedException;
 
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -33,7 +32,5 @@ public abstract class CollectionConverter implements Converter {
         return result.toString();
     }
 
-    public String makeCollection(String type, List<String> values) {
-        throw new NotImplementedException("Method doesn't implemented");
-    }
+    public abstract String makeCollection(String type, List<String> values);
 }

@@ -22,8 +22,7 @@ public class PluginMojo extends AbstractMojo {
     private MavenProject project;
 
     @Override
-    public void execute()
-    {
+    public void execute() {
         ClassLoaderUtils classLoaderUtils = new ClassLoaderUtils(project);
         CodeGenerator generator = new CodeGenerator(classLoaderUtils.getClassLoader());
         var result = generator.generate(jsonFile, modelPackage);

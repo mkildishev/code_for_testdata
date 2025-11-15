@@ -1,6 +1,7 @@
 package org.example;
 
 import com.mkildishev.generator.CodeGenerator;
+import com.mkildishev.generator.builder.NameBuilder;
 import org.junit.jupiter.api.*;
 
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
@@ -11,6 +12,11 @@ public class SetTest {
     @BeforeAll
     void init() {
         codeGenerator = new CodeGenerator(Thread.currentThread().getContextClassLoader());
+    }
+
+    @BeforeEach
+    void setUp() {
+        NameBuilder.reset();
     }
 
     @Test

@@ -13,7 +13,7 @@ import java.nio.file.Paths;
 import java.util.Objects;
 
 public class Utils {
-
+    // Разделить утилитарные методы для создания кода, и для работы с файлами
     public static String makeObject(String type, String obj) {
         return type + " " + obj + " = " + "new " + type + "();\n";
     }

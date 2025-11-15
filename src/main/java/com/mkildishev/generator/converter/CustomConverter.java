@@ -1,6 +1,7 @@
 package com.mkildishev.generator.converter;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mkildishev.generator.builder.NameBuilder;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
 import com.mkildishev.generator.utils.Utils;
 import org.codehaus.plexus.util.StringUtils;
@@ -8,10 +9,6 @@ import org.codehaus.plexus.util.StringUtils;
 import java.lang.reflect.Type;
 import java.util.Iterator;
 import java.util.Map;
-
-import static com.mkildishev.generator.builder.NameBuilder.getName;
-import static com.mkildishev.generator.builder.NameBuilder.popName;
-import static com.mkildishev.generator.utils.Utils.makeObject;
 
 public class CustomConverter implements Converter {
 
@@ -24,8 +21,8 @@ public class CustomConverter implements Converter {
     @Override
     public String convert(JsonNode node, Type type) {
         StringBuilder result = new StringBuilder();
-        var objectName = getName();
-        result.append(makeObject(((Class<?>) type).getSimpleName(), objectName));
+        var objectName = NameBuilder.getName();
+        result.append(Utils.makeObject(((Class<?>) type).getSimpleName(), objectName));
         Class<?> clazz = Utils.getClass(type.getTypeName());
         for (Iterator<Map.Entry<String, JsonNode>> it = node.fields(); it.hasNext(); ) {
             try {
@@ -45,7 +42,7 @@ public class CustomConverter implements Converter {
     }
 
     private String makeSetter(String object, String method) {
-        return object + "." + "set" + StringUtils.capitalise(method) + "(" + popName() + ");" + '\n';
+        return object + "." + "set" + StringUtils.capitalise(method) + "(" + NameBuilder.popName() + ");" + '\n';
     }
 
 

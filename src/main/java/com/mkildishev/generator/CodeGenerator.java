@@ -1,6 +1,5 @@
 package com.mkildishev.generator;
 
-import com.mkildishev.generator.builder.NameBuilder;
 import com.mkildishev.generator.converter.Converter;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
 import com.mkildishev.generator.utils.Utils;
@@ -16,14 +15,13 @@ public class CodeGenerator {
     }
 
 
-    public String generate(String jsonFile, String modelPackage){
+    public String generate(String jsonFile, String modelPackage) {
         var objJson = Utils.getResource(jsonFile);
         var className = StringUtils.capitalise(objJson.fields().next().getKey());
         var objToProcess = objJson.fields().next().getValue();
         var clazz = Utils.getClass(modelPackage + "." + className);
         Converter converter = converterFactory.createConverter(clazz);
         var result = converter.convert(objToProcess, clazz);
-        NameBuilder.reset();
         return result;
     }
 

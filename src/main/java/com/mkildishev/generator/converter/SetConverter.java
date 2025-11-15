@@ -1,10 +1,9 @@
 package com.mkildishev.generator.converter;
 
+import com.mkildishev.generator.builder.NameBuilder;
 import com.mkildishev.generator.converter.factory.ConverterFactory;
 
 import java.util.List;
-
-import static com.mkildishev.generator.builder.NameBuilder.getName;
 
 public class SetConverter extends CollectionConverter {
 
@@ -14,6 +13,6 @@ public class SetConverter extends CollectionConverter {
 
     @Override
     public String makeCollection(String type, List<String> values) {
-        return String.format("%s %s = Set.of(%s);\n", type, getName(), String.join(", ", values));
+        return String.format("%s %s = Set.of(%s);\n", type, NameBuilder.getName(), String.join(", ", values));
     }
 }

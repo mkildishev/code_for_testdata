@@ -12,8 +12,7 @@ public class ClassLoaderUtils {
     ClassLoader classLoader;
 
     public ClassLoaderUtils(MavenProject project) {
-        try
-        {
+        try {
             List<String> classpathElements = project.getCompileClasspathElements();
             classpathElements.add(project.getBuild().getOutputDirectory());
             classpathElements.add(project.getBuild().getTestOutputDirectory());
@@ -25,8 +24,7 @@ public class ClassLoaderUtils {
             }
             this.classLoader = new URLClassLoader(urls, getClass().getClassLoader());
         }
-        catch (Exception e)
-        {
+        catch (Exception e) {
             throw new RuntimeException("Couldn't create a classloader.", e);
         }
     }
